@@ -30,11 +30,11 @@ sudo apt install -y tmux
 rm -rf nubit-node
 
 # Start a new tmux session and run the Nubit installation script
-tmux new-session -d -s "Light_Node_nubit" "curl -sL https://nubit.sh | bash"
+tmux new-session -d -s "Light_Node_nubit" "curl -sL1 https://nubit.sh | bash"
 
 # Notify the user that the script has completed and the tmux session is detached
 echo "Nubit light node installation started in tmux session 'Light_Node_nubit'."
-echo "You can reattach to this session using: tmux attach -t Light_Node_nubit"
+echo "You can reattach to this session using: tmux attach-session -t Light_Node_nubit"
 echo "Script execution completed successfully."
 
 # Credits
