@@ -3,94 +3,111 @@
 # Function to display the styled message
 display_message() {
   echo -e "\e[36m╔═════════════════════════════════════════════════════════════════╗"
-  echo -e "║    Welcome to Allora W0rker-N0de Auto Setup B0T💀                     ║"
-  echo -e "║                                                                       ║"
-  echo -e "║                                                                       ║"
-  echo -e "║                                                                       ║"
-  echo -e "║     Follow us on (X)Twitter:                                          ║"
-  echo -e "║     https://twitter.com/cipher_airdrop                                ║"
-  echo -e "║                                                                       ║"
-  echo -e "║     Join us on Telegram:                                              ║"
-  echo -e "║       - https://t.me/+tFmYJSANTD81MzE1                                ║"
+  echo -e "║    Welcome to Allora W0rker-N0de Auto Setup B0T💀                 ║"
+  echo -e "║                                                                   ║"
+  echo -e "║     Follow us on (X)Twitter:                                      ║"
+  echo -e "║     https://twitter.com/cipher_airdrop                            ║"
+  echo -e "║                                                                   ║"
+  echo -e "║     Join us on Telegram:                                          ║"
+  echo -e "║       - https://t.me/+tFmYJSANTD81MzE1                            ║"
   echo -e "╚═════════════════════════════════════════════════════════════════╝\e[0m"
 }
 
 # Display the styled message at the beginning
 display_message
 
-# Update and Upgrade
-sudo apt update && sudo apt upgrade -y
-
-# Install Dependencies
-sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 python3 python3-pip
-
-# Install Docker
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io
-docker version
-
-# Install Docker Compose
-VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
-sudo curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-sudo chmod +x /usr/local/bin/docker-compose
-docker-compose --version
-
-# Docker Permission
-sudo groupadd docker
-sudo usermod -aG docker $USER
-newgrp docker
-
-# Install Go
-sudo rm -rf /usr/local/go
-curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
-echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
-echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
-source $HOME/.bash_profile
-go version
-
-# Install Allorad
-git clone https://github.com/allora-network/allora-chain.git
-cd allora-chain && make all
-allorad version
-
-# Key management
-echo "Do you want to create a new wallet or recover an existing one? (create/recover)"
-read -r wallet_option
-
-if [ "$wallet_option" = "recover" ]; then
-  allorad keys add testkey --recover
+# Check if re-running after logout
+if [ -f ~/.docker_setup_stage ]; then
+  stage=$(cat ~/.docker_setup_stage)
 else
-  allorad keys add testkey
+  stage="start"
 fi
 
-# Install workers
-cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-node
-cd basic-coin-prediction-node
+# Update and Upgrade
+if [ "$stage" == "start" ]; then
+  sudo apt update && sudo apt upgrade -y
 
-mkdir workers
-mkdir workers/worker-1 workers/worker-2 workers/worker-3 head-data
-sudo chmod -R 777 workers/worker-1 workers/worker-2 workers/worker-3 head-data
+  # Install Dependencies
+  sudo apt install -y ca-certificates zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev curl git wget make jq build-essential pkg-config lsb-release libssl-dev libreadline-dev libffi-dev gcc screen unzip lz4 python3 python3-pip
 
-# Create head keys
-sudo docker run -it --entrypoint=bash -v "$PWD/head-data":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+  # Install Docker
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+  echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+  sudo apt-get update
+  sudo apt-get install -y docker-ce docker-ce-cli containerd.io
+  docker version
 
-# Create worker keys
-for i in {1..3}; do
-  sudo docker run -it --entrypoint=bash -v "$PWD/workers/worker-$i":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
-done
+  # Install Docker Compose
+  VER=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep tag_name | cut -d '"' -f 4)
+  sudo curl -L "https://github.com/docker/compose/releases/download/$VER/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  sudo chmod +x /usr/local/bin/docker-compose
+  docker-compose --version
 
-# Copy the head-id
-HEAD_ID=$(cat head-data/keys/identity)
-echo "Save this HEAD_ID: $HEAD_ID"
+  # Docker Permission
+  sudo groupadd docker || true
+  sudo usermod -aG docker $USER
 
-# Save variables
-echo "Enter the WALLET_SEED_PHRASE:"
-read -r WALLET_SEED_PHRASE
+  echo "docker" > ~/.docker_setup_stage
 
-# Create docker-compose.yml
-cat > docker-compose.yml <<EOL
+  # Notify user to log out and back in
+  echo -e "\e[31mPlease log out and log back in to apply Docker group changes.\e[0m"
+  echo -e "\e[31mThen, re-run this script to continue the setup.\e[0m"
+
+  # Stop script execution for manual action
+  exit 0
+fi
+
+if [ "$stage" == "docker" ]; then
+
+  # Install Go
+  sudo rm -rf /usr/local/go
+  curl -L https://go.dev/dl/go1.22.4.linux-amd64.tar.gz | sudo tar -xzf - -C /usr/local
+  echo 'export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin' >> $HOME/.bash_profile
+  echo 'export PATH=$PATH:$(go env GOPATH)/bin' >> $HOME/.bash_profile
+  source $HOME/.bash_profile
+  go version
+
+  # Install Allorad
+  git clone https://github.com/allora-network/allora-chain.git
+  cd allora-chain && make all
+  allorad version
+
+  # Key management
+  echo "Do you want to create a new wallet or recover an existing one? (create/recover)"
+  read -r wallet_option
+
+  if [ "$wallet_option" = "recover" ]; then
+    allorad keys add testkey --recover
+  else
+    allorad keys add testkey
+  fi
+
+  # Install workers
+  cd $HOME && git clone https://github.com/allora-network/basic-coin-prediction-node
+  cd basic-coin-prediction-node
+
+  mkdir workers
+  mkdir workers/worker-1 workers/worker-2 workers/worker-3 head-data
+  sudo chmod -R 777 workers/worker-1 workers/worker-2 workers/worker-3 head-data
+
+  # Create head keys
+  sudo docker run -it --entrypoint=bash -v "$PWD/head-data":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+
+  # Create worker keys
+  for i in {1..3}; do
+    sudo docker run -it --entrypoint=bash -v "$PWD/workers/worker-$i":/data alloranetwork/allora-inference-base:latest -c "mkdir -p /data/keys && (cd /data/keys && allora-keys)"
+  done
+
+  # Copy the head-id
+  HEAD_ID=$(cat head-data/keys/identity)
+  echo "Save this HEAD_ID: $HEAD_ID"
+
+  # Save variables
+  echo "Enter the WALLET_SEED_PHRASE:"
+  read -r WALLET_SEED_PHRASE
+
+  # Create docker-compose.yml
+  cat > docker-compose.yml <<EOL
 version: '3'
 
 services:
@@ -305,5 +322,10 @@ EOL
 docker-compose build
 docker-compose up -d
 
+# Clean up stage file
+rm ~/.docker_setup_stage
+
 # Display styled message at end of script
 display_message
+
+fi
