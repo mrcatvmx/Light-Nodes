@@ -9,7 +9,7 @@ Follow us here: [Cipher_Airdrop](https://linktr.ee/cadrop)
 
 Twitter(X): [Cipher_Airdrop](https://x.com/cipher_airdrop)
 
-Telegram: [Cipher_Airdrop](https://t.me/+tFmYJSANTD81MzE1)
+Telegram: [Cipher_Airdrop](https://t.me/cipher_airdrop)
 
 # Who am I?
 
