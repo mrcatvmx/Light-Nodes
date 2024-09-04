@@ -100,7 +100,7 @@ if [ "$stage" == "docker" ]; then
         "alloraHomeDir": "/root/.allorad",
         "gas": "1000000",
         "gasAdjustment": 1.0,
-        "nodeRpc": "https://allora-rpc.testnet.allora.network/",   # Updated RPC URL
+        "nodeRpc": "https://allora-rpc.testnet.allora.network/",
         "maxRetries": 1,
         "delay": 1,
         "submitTx": false
@@ -195,9 +195,18 @@ EOF
     wallet_name=$(allorad keys list | grep -o 'testkey')
     sed -i "s/testkey/$wallet_name/g" config.json
 
-    # Prompt to replace Coingecko API in app.py
-    echo -e "\e[33mPlease update the Coingecko API in app.py as needed. The file will now open for editing.\e[0m"
-    nano app.py
+    # Create the env file if it doesn't exist
+    if [ ! -f /root/allora-huggingface-walkthrough/worker-data/env_file ]; then
+      cat <<EOF > /root/allora-huggingface-walkthrough/worker-data/env_file
+WALLET_PHRASES="$wallet_phrases"
+INFERENCE_ENDPOINT="http://inference:8000"
+TOKEN="ETH"
+EOF
+      echo "Environment file created."
+    fi
+
+    # Set correct permissions for the worker-data directory
+    chmod -R 777 /root/allora-huggingface-walkthrough/worker-data
 
     # Run Huggingface Worker
     chmod +x init.config
@@ -244,7 +253,7 @@ EOF
         "alloraHomeDir": "/root/.allorad",
         "gas": "1000000",
         "gasAdjustment": 1.0,
-        "nodeRpc": "https://allora-rpc.testnet.allora.network/",   # Updated RPC URL
+        "nodeRpc": "https://allora-rpc.testnet.allora.network/",
         "maxRetries": 1,
         "delay": 1,
         "submitTx": false
@@ -339,9 +348,18 @@ EOF
     wallet_name=$(allorad keys list | grep -o 'testkey')
     sed -i "s/testkey/$wallet_name/g" config.json
 
-    # Prompt to replace Coingecko API in app.py
-    echo -e "\e[33mPlease update the Coingecko API in app.py as needed. The file will now open for editing.\e[0m"
-    nano app.py
+    # Create the env file if it doesn't exist
+    if [ ! -f /root/allora-huggingface-walkthrough/worker-data/env_file ]; then
+      cat <<EOF > /root/allora-huggingface-walkthrough/worker-data/env_file
+WALLET_PHRASES="$wallet_phrases"
+INFERENCE_ENDPOINT="http://inference:8000"
+TOKEN="ETH"
+EOF
+      echo "Environment file created."
+    fi
+
+    # Set correct permissions for the worker-data directory
+    chmod -R 777 /root/allora-huggingface-walkthrough/worker-data
 
     # Run Huggingface Worker
     chmod +x init.config
