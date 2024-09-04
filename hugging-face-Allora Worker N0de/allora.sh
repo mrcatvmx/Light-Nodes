@@ -100,7 +100,7 @@ if [ "$stage" == "docker" ]; then
         "alloraHomeDir": "/root/.allorad",
         "gas": "1000000",
         "gasAdjustment": 1.0,
-        "nodeRpc": "https://allora-rpc.testnet-1.testnet.allora.network/",
+        "nodeRpc": "https://allora-rpc.testnet.allora.network/",   # Updated RPC URL
         "maxRetries": 1,
         "delay": 1,
         "submitTx": false
@@ -244,7 +244,7 @@ EOF
         "alloraHomeDir": "/root/.allorad",
         "gas": "1000000",
         "gasAdjustment": 1.0,
-        "nodeRpc": "https://allora-rpc.testnet-1.testnet.allora.network/",
+        "nodeRpc": "https://allora-rpc.testnet.allora.network/",   # Updated RPC URL
         "maxRetries": 1,
         "delay": 1,
         "submitTx": false
