@@ -208,6 +208,10 @@ EOF
     # Set correct permissions for the worker-data directory
     chmod -R 777 /root/allora-huggingface-walkthrough/worker-data
 
+    # Open app.py for editing
+    echo -e "\e[33mPlease update the Coingecko API in app.py as needed. The file will now open for editing.\e[0m"
+    nano app.py
+
     # Run Huggingface Worker
     chmod +x init.config
     ./init.config
@@ -360,6 +364,10 @@ EOF
 
     # Set correct permissions for the worker-data directory
     chmod -R 777 /root/allora-huggingface-walkthrough/worker-data
+
+    # Open app.py for editing
+    echo -e "\e[33mPlease update the Coingecko API in app.py as needed. The file will now open for editing.\e[0m"
+    nano app.py
 
     # Run Huggingface Worker
     chmod +x init.config
