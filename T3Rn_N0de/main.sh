@@ -43,7 +43,8 @@ rm -rf executor
 sudo apt -q update
 sudo apt -qy upgrade
 
-EXECUTOR_URL="https://github.com/t3rn/executor-release/releases/download/v0.21.0/executor-linux-v0.20.0.tar.gz"
+# Ensure the URL and the file version match
+EXECUTOR_URL="https://github.com/t3rn/executor-release/releases/download/v0.21.0/executor-linux-v0.21.0.tar.gz"
 EXECUTOR_FILE="executor-linux-v0.21.0.tar.gz"
 
 echo "Retrieving the Executor binary from $EXECUTOR_URL..."
@@ -56,7 +57,20 @@ fi
 
 echo "Unpacking the binary..."
 tar -xzvf $EXECUTOR_FILE
+
+if [ $? -ne 0 ]; then
+    echo "Extraction failed. Please check the tarball format."
+    exit 1
+fi
+
 rm -rf $EXECUTOR_FILE
+
+# Ensure the directory exists before trying to cd
+if [ ! -d "executor/executor/bin" ]; then
+    echo "Directory executor/executor/bin not found after extraction."
+    exit 1
+fi
+
 cd executor/executor/bin
 
 echo "The binary has been successfully downloaded and unpacked."
