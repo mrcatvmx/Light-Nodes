@@ -96,5 +96,3 @@ echo
 
 echo "Launching the Executor..."
 ./executor
-
-echo "Setup is complete! The Executor is now active."
