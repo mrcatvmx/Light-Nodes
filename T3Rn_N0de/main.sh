@@ -39,22 +39,24 @@ print_intro
 # Continue with the original script
 
 cd $HOME
+rm -rf executor
 sudo apt -q update
 sudo apt -qy upgrade
 
-EXECUTOR_URL="https://github.com/t3rn/executor-release/releases/download/v0.20.0/executor-linux-v0.20.0.tar.gz"
-EXECUTOR_FILE="executor-linux-v0.20.0.tar.gz"
+EXECUTOR_URL="https://github.com/t3rn/executor-release/releases/download/v0.21.0/executor-linux-v0.20.0.tar.gz"
+EXECUTOR_FILE="executor-linux-v0.21.0.tar.gz"
 
 echo "Retrieving the Executor binary from $EXECUTOR_URL..."
 curl -L -o $EXECUTOR_FILE $EXECUTOR_URL
 
 if [ $? -ne 0 ]; then
-    echo "Unable to download the Executor binary. Please check your internet connection and retry."
+    echo "Unable to download the Executor binary."
     exit 1
 fi
 
 echo "Unpacking the binary..."
 tar -xzvf $EXECUTOR_FILE
+rm -rf $EXECUTOR_FILE
 cd executor/executor/bin
 
 echo "The binary has been successfully downloaded and unpacked."
