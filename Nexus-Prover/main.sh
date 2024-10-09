@@ -125,6 +125,16 @@ install_rust() {
 # Install Rust
 install_rust
 
+# Install Cargo if not already installed
+if ! command -v cargo &> /dev/null; then
+    echo "Cargo is not installed. Installing Cargo..."
+    curl https://sh.rustup.rs -sSf | sh -s -- -y
+    source $HOME/.cargo/env
+    echo "Cargo installation completed."
+else
+    echo "Cargo is already installed."
+fi
+
 # Update package list
 echo "Updating package list..."
 if ! sudo apt update; then
